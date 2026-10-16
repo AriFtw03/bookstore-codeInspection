@@ -79,9 +79,10 @@ def process_order(token, items, coupon=None, shipping="standard", log=None):
     return round(total, 2)
 
 
-def print_invoice(username, items):
+def _print_receipt_body(username, items, title):
+    """Helper function to remove code duplication when printing."""
     print(SEPARATOR)
-    print("BOOKSTORE INVOICE")
+    print(title)
     print("Customer: " + username)
     print(SEPARATOR)
     subtotal = 0
@@ -94,24 +95,13 @@ def print_invoice(username, items):
     print("Subtotal: " + str(round(subtotal, 2)))
     print("Tax: " + str(round(tax, 2)))
     print("Total: " + str(round(subtotal + tax, 2)))
-    print(SEPARATOR)
 
+def print_invoice(username, items):
+    _print_receipt_body(username, items, "BOOKSTORE INVOICE")
+    print(SEPARATOR)
 
 def print_quote(username, items):
-    print(SEPARATOR)
-    print("BOOKSTORE QUOTE")
-    print("Customer: " + username)
-    print(SEPARATOR)
-    subtotal = 0
-    for item in items:
-        book = database.get_book(item["book_id"])
-        line_total = book[2] * item["qty"]
-        subtotal = subtotal + line_total
-        print(book[1] + " x" + str(item["qty"]) + " = " + str(line_total))
-    tax = subtotal * TAX
-    print("Subtotal: " + str(round(subtotal, 2)))
-    print("Tax: " + str(round(tax, 2)))
-    print("Total: " + str(round(subtotal + tax, 2)))
+    _print_receipt_body(username, items, "BOOKSTORE QUOTE")
     print("This quote is valid for 7 days.")
     print(SEPARATOR)
 
